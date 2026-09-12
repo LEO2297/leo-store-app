@@ -13,30 +13,120 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+
 html, body, [class*="css"] {
     font-family: 'Tajawal', sans-serif;
     direction: rtl;
     text-align: right;
 }
-.stApp { background-color: #0f172a; color: #f8fafc; }
-.main-header {
+
+/* خلفية المتجر السوداء الداكنة بالكامل */
+.stApp {
+    background-color: #080c14;
+    color: #f1f5f9;
+}
+
+/* الهيدر السينمائي الفخم مع صورة هانيبال وإضاءة الجلو */
+.hannibal-header {
+    position: relative;
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(5, 7, 11, 0.98) 100%);
+    border-radius: 16px;
+    border: 1px solid #1e293b;
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.15), inset 0 0 15px rgba(0, 0, 0, 0.5);
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+/* تصميم صورة هانيبال الدائرية مع إضاءة الجلو */
+.hannibal-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #38bdf8;
+    box-shadow: 0 0 25px #38bdf8, 0 0 50px rgba(56, 189, 248, 0.4);
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+}
+
+.hannibal-avatar:hover {
+    transform: scale(1.05);
+}
+
+.hannibal-header h1 {
+    color: #38bdf8;
+    font-weight: 900;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+.hannibal-header p {
+    color: #94a3b8;
+    font-size: 1.1rem;
+}
+
+/* تنسيق التبوابات (Tabs) بشكل أنيق ومرتب */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 10px;
+    background-color: #0f172a;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid #1e293b;
+}
+
+.stTabs [data-baseweb="tab"] {
+    background-color: #1e293b;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-weight: 700;
+    padding: 10px 20px;
+    border: none;
+}
+
+.stTabs [aria-selected="true"] {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(2, 132, 199, 0.5);
+}
+
+/* تحسين شكل الأزرار */
+.stButton button {
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: white;
+    font-weight: 700;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 0 10px rgba(2, 132, 199, 0.3);
+    transition: all 0.3s ease;
+}
+
+.stButton button:hover {
+    background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+    box-shadow: 0 0 20px rgba(2, 132, 199, 0.6);
+}
+
+/* الفوتر */
+.footer {
     text-align: center;
     padding: 20px;
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    border-radius: 12px;
-    border: 1px solid #334155;
-    margin-bottom: 25px;
+    margin-top: 60px;
+    border-top: 1px solid #1e293b;
+    color: #64748b;
+    font-size: 0.9rem;
 }
-.main-header h1 { color: #38bdf8; font-weight: 700; margin-bottom: 5px; }
-.footer { text-align: center; padding: 15px; margin-top: 50px; border-top: 1px solid #334155; color: #94a3b8; }
 </style>
 """, unsafe_allow_html=True)
 
+# الهيدر السينمائي المطور مع صورتك الخاصة وإضاءة الجلو
 st.markdown("""
-<div class="main-header">
-    <h1>⚡ LEO STORE - أداة تحسين وفحص فيديوهات تيك توك</h1>
-    <p>منصة احترافية لتحسين دقة وفريمات الفيديوهات وفحص تفاصيل الروابط</p>
+<div class="hannibal-header">
+    <img src="https://raw.githubusercontent.com/LEO2297/leo-store-app/main/IMG_0787.jpeg" class="hannibal-avatar" alt="LEO STORE Hannibal">
+    <h1>⚡ LEO STORE</h1>
+    <p>منصة احترافية لتحسين دقة وفريمات الفيديوهات وفحص تفاصيل الروابط بإضاءة سينمائية</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -101,7 +191,6 @@ with tab2:
                         
                         fps_real = "غير محدد"
                         
-                        # تحميل أول ثانية فقط بفحص مباشر ومضمون
                         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp_vid:
                             tmp_path = tmp_vid.name
                         
@@ -141,3 +230,9 @@ with tab2:
                     st.error(f"حدث خطأ أثناء الفحص: {str(e)}")
         else:
             st.warning("يرجى إدخال رابط أولاً.")
+
+st.markdown("""
+<div class="footer">
+    جميع الحقوق محفوظة © LEO STORE 2026
+</div>
+""", unsafe_allow_html=True)
