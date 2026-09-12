@@ -3,6 +3,7 @@ import subprocess
 import os
 import tempfile
 import json
+import re
 
 st.set_page_config(
     page_title="LEO STORE | أداة تيك توك الاحترافية",
@@ -84,14 +85,13 @@ with tab1:
                     st.error(f"حدث خطأ غير متوقع: {str(e)}")
 
 with tab2:
-    st.subheader("تحليل وفحص روابط الفيديوهات (yt-dlp & ffprobe)")
+    st.subheader("تحليل وفحص روابط الفيديوهات")
     video_url = st.text_input("ضع رابط فيديو تيك توك هنا:", placeholder="https://www.tiktok.com/@username/video/123456789")
     
     if st.button("🔍 فحص الرابط وجلب التفاصيل"):
         if video_url:
             with st.spinner("جاري تحليل الفيديو واستخراج الفريمات بدقة..."):
                 try:
-                    # جلب معلومات yt-dlp
                     cmd = ["yt-dlp", "-j", video_url]
                     res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                     
@@ -99,27 +99,19 @@ with tab2:
                         data = json.loads(res.stdout)
                         st.success("تم العثور على معلومات الفيديو بنجاح!")
                         
-                        # الحصول على رابط الفيديو المباشر لتحليله بـ ffprobe
                         direct_url = data.get('url')
                         fps_real = "غير محدد"
                         
+                        # استخراج الـ FPS الحقيقي باستخدام ffmpeg المتوفر بالنظام
                         if direct_url:
-                            probe_cmd = [
-                                "ffprobe", "-v", "error",
-                                "-select_streams", "v:0",
-                                "-show_entries", "stream=r_frame_rate",
-                                "-of", "default=noprint_wrappers=1:nobp=1",
-                                direct_url
-                            ]
-                            probe_res = subprocess.run(probe_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                            if probe_res.returncode == 0 and probe_res.stdout.strip():
-                                rate_str = probe_res.stdout.strip().replace("r_frame_rate=", "")
-                                if "/" in rate_str:
-                                    num, den = map(float, rate_str.split("/"))
-                                    if den > 0:
-                                        fps_real = f"{round(num / den)} FPS"
-                                else:
-                                    fps_real = f"{rate_str} FPS"
+                            ff_cmd = ["ffmpeg", "-i", direct_url, "-t", "1", "-f", "null", "-"]
+                            ff_res = subprocess.run(ff_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                            
+                            # البحث عن نمط fps في مخرجات ffmpeg (مثال: 30 fps أو 60 fps أو 29.97 fps)
+                            match = re.search(r'(\d+(?:\.\d+)?)\s*fps', ff_res.stderr)
+                            if match:
+                                fps_val = float(match.group(1))
+                                fps_real = f"{round(fps_val)} FPS"
 
                         col1, col2 = st.columns(2)
                         with col1:
