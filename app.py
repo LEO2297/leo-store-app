@@ -1,4 +1,3 @@
-import streamlit as st
 import subprocess
 import os
 import tempfile
@@ -6,7 +5,7 @@ import json
 import re
 
 st.set_page_config(
-    page_title="LEO STORE | أداة تيك توك الاحترافية",
+    page_title="LEO STORE | Professional TikTok Utility",
     page_icon="https://raw.githubusercontent.com/LEO2297/leo-store-app/main/IMG_0787.jpeg",
     layout="wide"
 )
@@ -120,7 +119,7 @@ st.markdown("""
 <div class="hannibal-header">
     <img src="https://raw.githubusercontent.com/LEO2297/leo-store-app/main/IMG_0787.jpeg" class="hannibal-avatar" alt="LEO STORE Hannibal">
     <h1>LEO STORE</h1>
-    <p>منصة احترافية لتحسين دقة وفريمات الفيديوهات وفحص تفاصيل الروابط بإضاءة سينمائية</p>
+    <p>منصة احترافية لتحسين دقة وفريمات الفيديوهات وفحص تفاصيل الروابط </p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -133,7 +132,7 @@ with tab1:
     if uploaded_file is not None:
         st.video(uploaded_file)
         if st.button("بدء المعالجة والتحسين", type="primary", key="unique_btn_v1"):
-            with st.spinner("جاري المعالجة بأعلى جودة..."):
+            with st.spinner("جاري المعالجة..."):
                 try:
                     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp_in:
                         tmp_in.write(uploaded_file.read())
@@ -175,9 +174,9 @@ with tab2:
     
     if st.button("فحص الرابط وجلب التفاصيل", key="unique_btn_v2"):
         if video_url:
-            with st.spinner("جاري جلب تفاصيل الفيديو وقراءة الفريمات الدقيقة..."):
+            with st.spinner("جاري جلب تفاصيل الفيديو وقراءة الفريمات الدقيقة ..."):
                 try:
-                    cmd = ["yt-dlp", "-j", video_url]
+                    cmd = ["yt-dlp", "--no-warnings", "-j", video_url]
                     res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                     
                     if res.returncode == 0:
@@ -189,17 +188,19 @@ with tab2:
                         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp_vid:
                             tmp_path = tmp_vid.name
                         
-                        # أمر الجلب المُحسّن لأعلى جودة خام ممكنة
                         dl_cmd = [
                             "yt-dlp",
-                            "--download-sections", "*00:00:00-00:00:01",
+                            "--no-warnings",
+                            "--download-sections", "*00:00:00-00:00:03",
                             "-o", tmp_path,
                             "--force-overwrites",
                             "--format", "bv*+ba/b",
+                            "--merge-output-format", "mp4",
+                            "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
                             video_url
                         ]
                         
-                        subprocess.run(dl_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=20)
+                        subprocess.run(dl_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=25)
                         
                         if os.path.exists(tmp_path) and os.path.getsize(tmp_path) > 0:
                             ff_cmd = ["ffmpeg", "-i", tmp_path, "-f", "null", "-"]
@@ -222,7 +223,7 @@ with tab2:
                             st.write(f"**عدد الإعجابات:** {data.get('like_count', 'غير محدد')}")
                             st.write(f"**معدل الفريمات الحقيقي:** {fps_real}")
                     else:
-                        st.error("تعذر جلب معلومات الرابط. تأكد من صحة الرابط.")
+                        st.error("تعذر جلب معلومات الرابط. تأكد من صحة الرابط أو أن الفيديو متاح للعامة.")
                 except Exception as e:
                     st.error(f"حدث خطأ أثناء الفحص: {str(e)}")
         else:
