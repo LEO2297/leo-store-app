@@ -122,7 +122,7 @@ html, body, [class*="css"] {
 </style>
 """, unsafe_allow_html=True)
 
-# الهيدر السينمائي باللون الأبيض والأسود وبدون علامة البرق
+# الهيدر السينمائي باللون الأبيض والأسود
 st.markdown("""
 <div class="hannibal-header">
     <img src="https://raw.githubusercontent.com/LEO2297/leo-store-app/main/IMG_0787.jpeg" class="hannibal-avatar" alt="LEO STORE Hannibal">
@@ -140,7 +140,7 @@ with tab1:
     if uploaded_file is not None:
         st.video(uploaded_file)
         if st.button("بدء المعالجة والتحسين", type="primary"):
-            with st.spinner("جاري المعالجة بأعلى جودة عبر FFmpeg..."):
+            with st.spinner("جاري المعالجة بأعلى جودة..."):
                 try:
                     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp_in:
                         tmp_in.write(uploaded_file.read())
@@ -167,7 +167,7 @@ with tab1:
                                 mime="video/mp4"
                             )
                     else:
-                        st.error("حدث خطأ أثناء معالجة الفيديو بواسطة FFmpeg.")
+                        st.error("حدث خطأ أثناء معالجة الفيديو.")
                         st.code(res.stderr)
                         
                     if os.path.exists(in_path): os.remove(in_path)
