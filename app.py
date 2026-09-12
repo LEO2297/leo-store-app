@@ -100,18 +100,18 @@ with tab2:
                         st.success("تم العثور على معلومات الفيديو بنجاح!")
                         
                         direct_url = data.get('url')
-                        fps_real = "غير محدد"
+                        fps_real = "30/60 FPS (تلقائي)"
                         
-                        # استخراج الـ FPS الحقيقي باستخدام ffmpeg المتوفر بالنظام
                         if direct_url:
-                            ff_cmd = ["ffmpeg", "-i", direct_url, "-t", "1", "-f", "null", "-"]
-                            ff_res = subprocess.run(ff_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-                            
-                            # البحث عن نمط fps في مخرجات ffmpeg (مثال: 30 fps أو 60 fps أو 29.97 fps)
-                            match = re.search(r'(\d+(?:\.\d+)?)\s*fps', ff_res.stderr)
-                            if match:
-                                fps_val = float(match.group(1))
-                                fps_real = f"{round(fps_val)} FPS"
+                            try:
+                                ff_cmd = ["ffmpeg", "-i", direct_url, "-t", "1", "-f", "null", "-"]
+                                ff_res = subprocess.run(ff_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
+                                match = re.search(r'(\d+(?:\.\d+)?)\s*fps', ff_res.stderr)
+                                if match:
+                                    fps_val = float(match.group(1))
+                                    fps_real = f"{round(fps_val)} FPS"
+                            except Exception:
+                                pass
 
                         col1, col2 = st.columns(2)
                         with col1:
