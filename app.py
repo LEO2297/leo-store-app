@@ -84,27 +84,43 @@ with tab1:
                     st.error(f"حدث خطأ غير متوقع: {str(e)}")
 
 with tab2:
-    st.subheader("تحليل وفحص روابط الفيديوهات (yt-dlp)")
+    st.subheader("تحليل وفحص روابط الفيديوهات (yt-dlp & ffprobe)")
     video_url = st.text_input("ضع رابط فيديو تيك توك هنا:", placeholder="https://www.tiktok.com/@username/video/123456789")
     
     if st.button("🔍 فحص الرابط وجلب التفاصيل"):
         if video_url:
-            with st.spinner("جاري فحص الرابط..."):
+            with st.spinner("جاري تحليل الفيديو واستخراج الفريمات بدقة..."):
                 try:
+                    # جلب معلومات yt-dlp
                     cmd = ["yt-dlp", "-j", video_url]
                     res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                    
                     if res.returncode == 0:
                         data = json.loads(res.stdout)
                         st.success("تم العثور على معلومات الفيديو بنجاح!")
                         
-                        # استخراج الفريمات من قائمة الصيغ إذا لم تكن موجودة في الحقل الرئيسي
-                        fps_val = data.get('fps')
-                        if not fps_val and 'formats' in data:
-                            for fmt in reversed(data['formats']):
-                                if fmt.get('fps'):
-                                    fps_val = fmt.get('fps')
-                                    break
+                        # الحصول على رابط الفيديو المباشر لتحليله بـ ffprobe
+                        direct_url = data.get('url')
+                        fps_real = "غير محدد"
                         
+                        if direct_url:
+                            probe_cmd = [
+                                "ffprobe", "-v", "error",
+                                "-select_streams", "v:0",
+                                "-show_entries", "stream=r_frame_rate",
+                                "-of", "default=noprint_wrappers=1:nobp=1",
+                                direct_url
+                            ]
+                            probe_res = subprocess.run(probe_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                            if probe_res.returncode == 0 and probe_res.stdout.strip():
+                                rate_str = probe_res.stdout.strip().replace("r_frame_rate=", "")
+                                if "/" in rate_str:
+                                    num, den = map(float, rate_str.split("/"))
+                                    if den > 0:
+                                        fps_real = f"{round(num / den)} FPS"
+                                else:
+                                    fps_real = f"{rate_str} FPS"
+
                         col1, col2 = st.columns(2)
                         with col1:
                             st.write(f"**العنوان:** {data.get('title', 'غير محدد')}")
@@ -113,11 +129,11 @@ with tab2:
                         with col2:
                             st.write(f"**عدد المشاهدات:** {data.get('view_count', 'غير محدد')}")
                             st.write(f"**عدد الإعجابات:** {data.get('like_count', 'غير محدد')}")
-                            st.write(f"**عدد الفريمات (FPS):** {fps_val if fps_val else 'غير محدد (تلقائي 30/60)'}")
+                            st.write(f"**معدل الفريمات الحقيقي:** {fps_real}")
                     else:
                         st.error("تعذر جلب معلومات الرابط. تأكد من صحة الرابط.")
                 except Exception as e:
-                    st.error(f"حدث خطأ: {str(e)}")
+                    st.error(f"حدث خطأ أثناء الفحص: {str(e)}")
         else:
             st.warning("يرجى إدخال رابط أولاً.")
 
