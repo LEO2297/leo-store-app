@@ -128,11 +128,11 @@ tab1, tab2 = st.tabs(["معالجة وتحسين الفيديو (60fps)", "فح�
 
 with tab1:
     st.subheader("رفع واختبار الفيديو")
-    uploaded_file = st.file_uploader("اختر فيديو للمعالجة (MP4, MOV, MKV)", type=["mp4", "mov", "mkv"])
+    uploaded_file = st.file_uploader("اختر فيديو للمعالجة (MP4, MOV, MKV)", type=["mp4", "mov", "mkv"], key="unique_uploader_v1")
     
     if uploaded_file is not None:
         st.video(uploaded_file)
-        if st.button("بدء المعالجة والتحسين", type="primary"):
+        if st.button("بدء المعالجة والتحسين", type="primary", key="unique_btn_v1"):
             with st.spinner("جاري المعالجة بأعلى جودة..."):
                 try:
                     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp_in:
@@ -157,7 +157,8 @@ with tab1:
                                 label="تحميل الفيديو المعدل (60fps)",
                                 data=file,
                                 file_name=f"LEO_STORE_{uploaded_file.name}",
-                                mime="video/mp4"
+                                mime="video/mp4",
+                                key="unique_download_v1"
                             )
                     else:
                         st.error("حدث خطأ أثناء معالجة الفيديو.")
@@ -169,10 +170,10 @@ with tab1:
                     st.error(f"حدث خطأ غير متوقع: {str(e)}")
 
 with tab2:
-    st.subheader("تحليل وفحص روابط الفيديوهات")
-    video_url = st.text_input("ضع رابط فيديو تيك توك هنا:", placeholder="https://www.tiktok.com/@username/video/123456789")
+    st.subheader("فحص وتحليل روابط الفيديوهات")
+    video_url = st.text_input("ضع رابط فيديو تيك توك هنا:", placeholder="https://www.tiktok.com/@username/video/123456789", key="unique_input_v2")
     
-    if st.button("فحص الرابط وجلب التفاصيل"):
+    if st.button("فحص الرابط وجلب التفاصيل", key="unique_btn_v2"):
         if video_url:
             with st.spinner("جاري جلب تفاصيل الفيديو وقراءة الفريمات الدقيقة..."):
                 try:
@@ -188,12 +189,13 @@ with tab2:
                         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp_vid:
                             tmp_path = tmp_vid.name
                         
+                        # أمر الجلب المُحسّن لأعلى جودة خام ممكنة
                         dl_cmd = [
                             "yt-dlp",
                             "--download-sections", "*00:00:00-00:00:01",
                             "-o", tmp_path,
                             "--force-overwrites",
-                            "--format", "best",
+                            "--format", "bv*+ba/b",
                             video_url
                         ]
                         
