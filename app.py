@@ -7,7 +7,7 @@ import re
 
 st.set_page_config(
     page_title="LEO STORE | أداة تيك توك الاحترافية",
-    page_icon="⚡",
+    page_icon="🎬",
     layout="wide"
 )
 
@@ -21,33 +21,33 @@ html, body, [class*="css"] {
     text-align: right;
 }
 
-/* خلفية المتجر السوداء الداكنة بالكامل */
+/* خلفية المتجر سوداء نقية بالكامل */
 .stApp {
-    background-color: #080c14;
-    color: #f1f5f9;
+    background-color: #000000;
+    color: #f8fafc;
 }
 
-/* الهيدر السينمائي الفخم مع صورة هانيبال وإضاءة الجلو */
+/* الهيدر السينمائي الفخم بالأبيض والأسود مع إضاءة جلو بيضاء */
 .hannibal-header {
     position: relative;
     text-align: center;
     padding: 40px 20px;
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(5, 7, 11, 0.98) 100%);
+    background: linear-gradient(135deg, rgba(15, 15, 15, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
     border-radius: 16px;
-    border: 1px solid #1e293b;
-    box-shadow: 0 0 30px rgba(56, 189, 248, 0.15), inset 0 0 15px rgba(0, 0, 0, 0.5);
+    border: 1px solid #262626;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.08), inset 0 0 15px rgba(0, 0, 0, 0.8);
     margin-bottom: 30px;
     overflow: hidden;
 }
 
-/* تصميم صورة هانيبال الدائرية مع إضاءة الجلو */
+/* تصميم صورة هانيبال الدائرية مع إضاءة جلو بيضاء */
 .hannibal-avatar {
     width: 120px;
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #38bdf8;
-    box-shadow: 0 0 25px #38bdf8, 0 0 50px rgba(56, 189, 248, 0.4);
+    border: 3px solid #ffffff;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.6), 0 0 50px rgba(255, 255, 255, 0.2);
     margin-bottom: 15px;
     transition: transform 0.3s ease;
 }
@@ -57,56 +57,57 @@ html, body, [class*="css"] {
 }
 
 .hannibal-header h1 {
-    color: #38bdf8;
+    color: #ffffff;
     font-weight: 900;
     font-size: 2.2rem;
     margin-bottom: 10px;
-    text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .hannibal-header p {
-    color: #94a3b8;
+    color: #a3a3a3;
     font-size: 1.1rem;
 }
 
-/* تنسيق التبوابات (Tabs) بشكل أنيق ومرتب */
+/* تنسيق التبويبات بالأبيض والأسود */
 .stTabs [data-baseweb="tab-list"] {
     gap: 10px;
-    background-color: #0f172a;
+    background-color: #0a0a0a;
     padding: 10px;
     border-radius: 12px;
-    border: 1px solid #1e293b;
+    border: 1px solid #262626;
 }
 
 .stTabs [data-baseweb="tab"] {
-    background-color: #1e293b;
+    background-color: #171717;
     border-radius: 8px;
-    color: #94a3b8;
+    color: #a3a3a3;
     font-weight: 700;
     padding: 10px 20px;
     border: none;
 }
 
 .stTabs [aria-selected="true"] {
-    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
-    color: #ffffff !important;
-    box-shadow: 0 0 15px rgba(2, 132, 199, 0.5);
+    background: linear-gradient(135deg, #e5e5e5 0%, #a3a3a3 / 100%) !important;
+    color: #000000 !important;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
-/* تحسين شكل الأزرار */
+/* تحسين شكل الأزرار (أبيض وفحمي) */
 .stButton button {
-    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-    color: white;
+    background: linear-gradient(135deg, #262626 0%, #0a0a0a 100%);
+    color: #ffffff;
     font-weight: 700;
     border-radius: 8px;
-    border: none;
-    box-shadow: 0 0 10px rgba(2, 132, 199, 0.3);
+    border: 1px solid #404040;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
     transition: all 0.3s ease;
 }
 
 .stButton button:hover {
-    background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
-    box-shadow: 0 0 20px rgba(2, 132, 199, 0.6);
+    background: linear-gradient(135deg, #404040 0%, #171717 100%);
+    border-color: #ffffff;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
 /* الفوتر */
@@ -114,18 +115,18 @@ html, body, [class*="css"] {
     text-align: center;
     padding: 20px;
     margin-top: 60px;
-    border-top: 1px solid #1e293b;
-    color: #64748b;
+    border-top: 1px solid #171717;
+    color: #737373;
     font-size: 0.9rem;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# الهيدر السينمائي المطور مع صورتك الخاصة وإضاءة الجلو
+# الهيدر السينمائي باللون الأبيض والأسود بدون علامة البرق
 st.markdown("""
 <div class="hannibal-header">
     <img src="https://raw.githubusercontent.com/LEO2297/leo-store-app/main/IMG_0787.jpeg" class="hannibal-avatar" alt="LEO STORE Hannibal">
-    <h1>⚡ LEO STORE</h1>
+    <h1>LEO STORE</h1>
     <p>منصة احترافية لتحسين دقة وفريمات الفيديوهات وفحص تفاصيل الروابط بإضاءة سينمائية</p>
 </div>
 """, unsafe_allow_html=True)
