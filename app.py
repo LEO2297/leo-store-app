@@ -2,6 +2,7 @@ import streamlit as st
 import subprocess
 import os
 import tempfile
+import json
 
 st.set_page_config(
     page_title="LEO STORE | أداة تيك توك الاحترافية",
@@ -27,17 +28,6 @@ html, body, [class*="css"] {
     margin-bottom: 25px;
 }
 .main-header h1 { color: #38bdf8; font-weight: 700; margin-bottom: 5px; }
-.telegram-card {
-    background-color: #18222d;
-    border: 1px solid #24303f;
-    border-radius: 10px;
-    padding: 20px;
-    color: #e1e9f0;
-    font-family: monospace;
-    margin-top: 15px;
-}
-.badge-blue { background-color: #0284c7; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; }
-.badge-green { background-color: #10b981; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; }
 .footer { text-align: center; padding: 15px; margin-top: 50px; border-top: 1px solid #334155; color: #94a3b8; }
 </style>
 """, unsafe_allow_html=True)
@@ -45,7 +35,7 @@ html, body, [class*="css"] {
 st.markdown("""
 <div class="main-header">
     <h1>⚡ LEO STORE - أداة تحسين وفحص فيديوهات تيك توك</h1>
-    <p>منصة احترافية لمعالجة الفيديوهات بأعلى جودة (60fps / CRF 18) وفحص الروابط</p>
+    <p>منصة احترافية لتحسين دقة وفريمات الفيديوهات وفحص تفاصيل الروابط</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -104,16 +94,17 @@ with tab2:
                     cmd = ["yt-dlp", "-j", video_url]
                     res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                     if res.returncode == 0:
-                        import json
                         data = json.loads(res.stdout)
                         st.success("تم العثور على معلومات الفيديو بنجاح!")
                         col1, col2 = st.columns(2)
                         with col1:
                             st.write(f"**العنوان:** {data.get('title', 'غير محدد')}")
                             st.write(f"**صاحب الحساب:** {data.get('uploader', 'غير محدد')}")
+                            st.write(f"**الدقة والجودة:** {data.get('width', '?')}x{data.get('height', '?')}")
                         with col2:
                             st.write(f"**عدد المشاهدات:** {data.get('view_count', 'غير محدد')}")
                             st.write(f"**عدد الإعجابات:** {data.get('like_count', 'غير محدد')}")
+                            st.write(f"**عدد الفريمات (FPS):** {data.get('fps', 'غير محدد')}")
                     else:
                         st.error("تعذر جلب معلومات الرابط. تأكد من صحة الرابط.")
                 except Exception as e:
