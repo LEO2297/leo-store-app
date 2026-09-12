@@ -188,7 +188,7 @@ with tab2:
                     
                     if res.returncode == 0:
                         data = json.loads(res.stdout)
-                        st.success("تم العثور على معلومات الفيديو بنجاح!")
+                        st.success("تم العثور على معلومات الفيديو بنجاح!"
                         
                         fps_real = "غير محدد"
                         
@@ -200,16 +200,17 @@ with tab2:
                             "--download-sections", "*00:00:00-00:00:01",
                             "-o", tmp_path,
                             "--force-overwrites",
-                            video_url
+                            "--format", "best",
+                            "--get-url", video_url
                         ]
                         
                         subprocess.run(dl_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=20)
                         
                         if os.path.exists(tmp_path) and os.path.getsize(tmp_path) > 0:
-                            ff_cmd = ["ffmpeg", "-i", tmp_path, "-f", "null", "-"]
+                            ff_cmd = ["ffmpeg", "-i", tmp_path, "-vf", "scale=-1:720", "-f", "mp4", "-"]
                             ff_res = subprocess.run(ff_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
                             
-                            match = re.search(r'(\d+(?:\.\d+)?)\s*fps', ff_res.stderr)
+                            match = re.search(r'(\d+(?:\.\d+)?)\s*fps', ff_res.stdout)
                             if match:
                                 fps_val = float(match.group(1))
                                 fps_real = f"{round(fps_val)} FPS"
