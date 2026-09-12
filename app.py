@@ -96,6 +96,15 @@ with tab2:
                     if res.returncode == 0:
                         data = json.loads(res.stdout)
                         st.success("تم العثور على معلومات الفيديو بنجاح!")
+                        
+                        # استخراج الفريمات من قائمة الصيغ إذا لم تكن موجودة في الحقل الرئيسي
+                        fps_val = data.get('fps')
+                        if not fps_val and 'formats' in data:
+                            for fmt in reversed(data['formats']):
+                                if fmt.get('fps'):
+                                    fps_val = fmt.get('fps')
+                                    break
+                        
                         col1, col2 = st.columns(2)
                         with col1:
                             st.write(f"**العنوان:** {data.get('title', 'غير محدد')}")
@@ -104,7 +113,7 @@ with tab2:
                         with col2:
                             st.write(f"**عدد المشاهدات:** {data.get('view_count', 'غير محدد')}")
                             st.write(f"**عدد الإعجابات:** {data.get('like_count', 'غير محدد')}")
-                            st.write(f"**عدد الفريمات (FPS):** {data.get('fps', 'غير محدد')}")
+                            st.write(f"**عدد الفريمات (FPS):** {fps_val if fps_val else 'غير محدد (تلقائي 30/60)'}")
                     else:
                         st.error("تعذر جلب معلومات الرابط. تأكد من صحة الرابط.")
                 except Exception as e:
