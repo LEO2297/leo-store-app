@@ -90,7 +90,7 @@ with tab2:
     
     if st.button("🔍 فحص الرابط وجلب التفاصيل"):
         if video_url:
-            with st.spinner("جاري تحليل الفيديو واستخراج الفريمات بدقة..."):
+            with st.spinner("جاري جلب تفاصيل الفيديو وقراءة الفريمات الدقيقة..."):
                 try:
                     cmd = ["yt-dlp", "-j", video_url]
                     res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -99,19 +99,32 @@ with tab2:
                         data = json.loads(res.stdout)
                         st.success("تم العثور على معلومات الفيديو بنجاح!")
                         
-                        direct_url = data.get('url')
-                        fps_real = "30/60 FPS (تلقائي)"
+                        fps_real = "غير محدد"
                         
-                        if direct_url:
-                            try:
-                                ff_cmd = ["ffmpeg", "-i", direct_url, "-t", "1", "-f", "null", "-"]
-                                ff_res = subprocess.run(ff_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=10)
-                                match = re.search(r'(\d+(?:\.\d+)?)\s*fps', ff_res.stderr)
-                                if match:
-                                    fps_val = float(match.group(1))
-                                    fps_real = f"{round(fps_val)} FPS"
-                            except Exception:
-                                pass
+                        # تحميل أول ثانية فقط بفحص مباشر ومضمون
+                        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp_vid:
+                            tmp_path = tmp_vid.name
+                        
+                        dl_cmd = [
+                            "yt-dlp",
+                            "--download-sections", "*00:00:00-00:00:01",
+                            "-o", tmp_path,
+                            "--force-overwrites",
+                            video_url
+                        ]
+                        
+                        subprocess.run(dl_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=20)
+                        
+                        if os.path.exists(tmp_path) and os.path.getsize(tmp_path) > 0:
+                            ff_cmd = ["ffmpeg", "-i", tmp_path, "-f", "null", "-"]
+                            ff_res = subprocess.run(ff_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                            
+                            match = re.search(r'(\d+(?:\.\d+)?)\s*fps', ff_res.stderr)
+                            if match:
+                                fps_val = float(match.group(1))
+                                fps_real = f"{round(fps_val)} FPS"
+                            
+                            os.remove(tmp_path)
 
                         col1, col2 = st.columns(2)
                         with col1:
@@ -128,9 +141,3 @@ with tab2:
                     st.error(f"حدث خطأ أثناء الفحص: {str(e)}")
         else:
             st.warning("يرجى إدخال رابط أولاً.")
-
-st.markdown("""
-<div class="footer">
-    جميع الحقوق محفوظة © LEO STORE 2026
-</div>
-""", unsafe_allow_html=True)
