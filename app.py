@@ -1,3 +1,4 @@
+import streamlit as st
 import subprocess
 import os
 import tempfile
@@ -119,7 +120,7 @@ st.markdown("""
 <div class="hannibal-header">
     <img src="https://raw.githubusercontent.com/LEO2297/leo-store-app/main/IMG_0787.jpeg" class="hannibal-avatar" alt="LEO STORE Hannibal">
     <h1>LEO STORE</h1>
-    <p>منصة احترافية لتحسين دقة وفريمات الفيديوهات وفحص تفاصيل الروابط </p>
+    <p>منصة احترافية لتحسين دقة وفريمات الفيديوهات وفحص تفاصيل الروابط بإضاءة سينمائية</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -132,7 +133,7 @@ with tab1:
     if uploaded_file is not None:
         st.video(uploaded_file)
         if st.button("بدء المعالجة والتحسين", type="primary", key="unique_btn_v1"):
-            with st.spinner("جاري المعالجة..."):
+            with st.spinner("جاري المعالجة بأعلى جودة..."):
                 try:
                     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp_in:
                         tmp_in.write(uploaded_file.read())
@@ -174,7 +175,7 @@ with tab2:
     
     if st.button("فحص الرابط وجلب التفاصيل", key="unique_btn_v2"):
         if video_url:
-            with st.spinner("جاري جلب تفاصيل الفيديو وقراءة الفريمات الدقيقة ..."):
+            with st.spinner("جاري جلب تفاصيل الفيديو وقراءة الفريمات الدقيقة بأعلى جودة خام..."):
                 try:
                     cmd = ["yt-dlp", "--no-warnings", "-j", video_url]
                     res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
